@@ -49,4 +49,10 @@ public class UserServiceImpl implements UserService{
         Integer userId = userRepository.create(firstName, lastName, email, password);
         return userRepository.findById(userId);
     }
+
+    @Override
+    public User validateUserById(Integer userId) throws AuthException {
+
+        return userRepository.findById(userId);
+    }
 }

@@ -8,12 +8,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,6 +24,22 @@ public class UserResource {
 
     @Autowired
     UserService userService;
+
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, Boolean>> isLoggedIn(HttpServletRequest request) {
+        Map<String, Boolean> map = new HashMap<>();
+        try {
+            Cookie cookie = WebUtils.getCookie(request, "cushionAccessToken");
+            String token = cookie.getValue();
+            int userId = (Integer) Jwts.parser().setSigningKey(Constants.API_SECRET_KEY).parseClaimsJws(token).getBody().get("userId");
+            userService.validateUserById(userId);
+            map.put("success", true);
+        } catch(Exception e) {
+
+            map.put("success", false);
+        }
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> loginUser(HttpServletResponse response, @RequestBody Map<String, Object> userMap) {

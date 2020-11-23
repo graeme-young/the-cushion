@@ -9,4 +9,6 @@ public interface UserService {
 
     User registerUser(String firstName, String lastName, String email, String password) throws AuthException;
 
+    User validateUserById(Integer userId) throws AuthException;
+
 }
