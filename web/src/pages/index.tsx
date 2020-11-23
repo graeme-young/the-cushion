@@ -9,11 +9,15 @@ import {
   Box,
   Image,
   Flex,
+  Heading,
+  Link,
 } from "@chakra-ui/core";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useInfiniteQuery } from "react-query";
 import { useQuery } from "react-query";
+import { Item } from "../../types";
+import { ItemPreviewCard } from "../components/ItemPreviewCard";
 import { Navbar } from "../components/Navbar";
 
 const Index = () => {
@@ -24,7 +28,7 @@ const Index = () => {
     }
   );
 
-  useEffect(() => {}, [data]);
+  // useEffect(() => {}, [data]);
 
   if (isLoading) {
     return <p>...Loading</p>;
@@ -39,38 +43,27 @@ const Index = () => {
     );
   }
 
+  if (data) {
+    if (data.data.length > 3) {
+      data.data.slice();
+    }
+  }
+
   return (
     <>
       <Navbar />
+      <Box ml={15}>
+        <Heading>Welcome to the Cushion!</Heading>
+        <Text>The world's greatest fake furntiure store</Text>
+        <Text>Browse fake couches, chairs, tables and more!</Text>
+        <Text>
+          <Link>Log in</Link> to add items to your wishlist, shopping cart and
+          pretend to buy any of the items in our store!
+        </Text>
+      </Box>
       <Flex m={25} flexDir="row">
         {data.data.map((item) => {
-          return (
-            <Box
-              maxW="sm"
-              borderWidth="1px"
-              borderRadius="lg"
-              overflow="hidden"
-              key={item.itemId}
-              alignItems="center"
-            >
-              <Image margin="auto" mt={15} src={item.imageUri} />
-
-              <Box
-                mt="1"
-                fontWeight="semibold"
-                as="h4"
-                lineHeight="tight"
-                isTruncated
-                m="1"
-              >
-                {item.name}
-              </Box>
-              <Box m="1">
-                <Text isTruncated>{item.description}</Text>
-                <Text>${item.price}</Text>
-              </Box>
-            </Box>
-          );
+          return <ItemPreviewCard item={item as Item} key={item.itemId} />;
         })}
       </Flex>
     </>
